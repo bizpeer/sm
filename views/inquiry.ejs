@@ -4,7 +4,7 @@
         <h2 class="section-title">
             <%= t.inquiry_title %>
         </h2>
-        <form action="/api/inquiry" method="POST">
+        <form id="inquiryForm" action="/api/inquiry" method="POST">
             <div class="form-group">
                 <label for="name">
                     <%= t.inquiry_name %>
@@ -23,10 +23,20 @@
                 </label>
                 <textarea id="message" name="message" class="form-control" required></textarea>
             </div>
-            <button type="submit" class="submit-btn">
+            <button type="submit" class="submit-btn" id="submitBtn">
                 <%= t.inquiry_submit %>
             </button>
         </form>
     </div>
+
+    <script>
+        document.getElementById('inquiryForm').onsubmit = function (e) {
+            // Prevent default POST on static GitHub Pages to avoid 405 error
+            if (location.hostname.includes('github.io')) {
+                e.preventDefault();
+                alert('GitHub Pages는 정적 호스팅이므로 실제 데이터 저장은 지원되지 않습니다.\nNode.js 백엔드 서버가 있는 경우에만 저장이 가능합니다.');
+            }
+        };
+    </script>
 
     <%- include('partials/footer') %>
