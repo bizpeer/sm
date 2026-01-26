@@ -3,16 +3,17 @@ const path = require('path');
 const ejs = require('ejs');
 
 const config = {
-    baseUrl: '/sm', // Repository name
+    baseUrl: '/sm', // GitHub Pages repository name
     outDir: path.join(__dirname, '../dist')
 };
 
 const viewsDir = path.join(__dirname, '../views');
 
 // Ensure outDir exists
-if (!fs.existsSync(config.outDir)) {
-    fs.mkdirSync(config.outDir, { recursive: true });
+if (fs.existsSync(config.outDir)) {
+    fs.rmSync(config.outDir, { recursive: true, force: true });
 }
+fs.mkdirSync(config.outDir, { recursive: true });
 
 // Helper to copy directory
 const copyRecursiveSync = (src, dest) => {
@@ -31,14 +32,15 @@ const copyRecursiveSync = (src, dest) => {
 
 // 1. Copy public assets
 console.log('Copying assets...');
-copyRecursiveSync(path.join(__dirname, '../public'), config.outDir);
+if (fs.existsSync(path.join(__dirname, '../public'))) {
+    copyRecursiveSync(path.join(__dirname, '../public'), config.outDir);
+}
 
 // 2. Render EJS files
 const pages = [
     { template: 'index.ejs', output: 'index.html', data: {} },
     { template: 'inquiry.ejs', output: 'inquiry.html', data: { product: '' } },
     { template: 'admin/login.ejs', output: 'admin/index.html', data: {} },
-    // Dashboard mockup
     {
         template: 'admin/dashboard.ejs', output: 'admin/dashboard.html', data: {
             inquiries: [
@@ -48,30 +50,34 @@ const pages = [
     }
 ];
 
-pages.forEach(page => {
-    const templatePath = path.join(viewsDir, page.template);
-    ejs.renderFile(templatePath, {
-        ...page.data,
-        baseUrl: config.baseUrl
-    }, (err, str) => {
-        if (err) {
+const renderAll = async () => {
+    for (const page of pages) {
+        const templatePath = path.join(viewsDir, page.template);
+        try {
+            const str = await ejs.renderFile(templatePath, {
+                ...page.data,
+                baseUrl: config.baseUrl
+            });
+
+            // Fix asset paths: /css -> /sm/css, /images -> /sm/images, etc.
+            // We use a regex that looks for / preceded by " or '
+            const fixedStr = str.replace(/(href|src|action)=["']\/([^"']*)["']/g, (match, p1, p2) => {
+                return `${p1}="${config.baseUrl}/${p2}"`;
+            });
+
+            const outputFilePath = path.join(config.outDir, page.output);
+            const outputDir = path.dirname(outputFilePath);
+
+            if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
+
+            fs.writeFileSync(outputFilePath, fixedStr);
+            console.log(`Generated: ${page.output}`);
+        } catch (err) {
             console.error(`Error rendering ${page.template}:`, err);
-            return;
+            process.exit(1); // Fail the build
         }
+    }
+    console.log('Build complete.');
+};
 
-        // Fix asset paths in rendered HTML for static hosting (/sm/...)
-        const fixedStr = str.replace(/href="\//g, `href="${config.baseUrl}/`)
-            .replace(/src="\//g, `src="${config.baseUrl}/`)
-            .replace(/action="\//g, `action="${config.baseUrl}/`);
-
-        const outputFilePath = path.join(config.outDir, page.output);
-        const outputDir = path.dirname(outputFilePath);
-
-        if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
-
-        fs.writeFileSync(outputFilePath, fixedStr);
-        console.log(`Generated: ${page.output}`);
-    });
-});
-
-console.log('Build complete.');
+renderAll();
