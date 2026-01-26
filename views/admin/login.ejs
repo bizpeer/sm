@@ -23,14 +23,16 @@
     </section>
 
     <script>
-        // GitHub Pages mock logic
+        // GitHub Pages static simulation logic
         if (location.hostname.includes('github.io')) {
-            document.getElementById('loginBtn').addEventListener('click', function (e) {
+            document.querySelector('form').addEventListener('submit', function (e) {
                 e.preventDefault();
                 const id = document.getElementById('id').value;
                 const pw = document.getElementById('password').value;
+
                 if (id === 'jjssjw' && pw === '01052181377') {
-                    location.href = '/sm/admin/dashboard.html';
+                    sessionStorage.setItem('sm_admin_log', 'true');
+                    location.href = '<%= baseUrl %>/admin/dashboard.html';
                 } else {
                     alert('ID 또는 비밀번호가 틀렸습니다.');
                 }

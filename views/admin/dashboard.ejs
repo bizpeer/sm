@@ -18,7 +18,7 @@
                         <th style="padding: 1rem;">문의내용</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="inquiryTableBody">
                     <% if(locals.inquiries && inquiries.length> 0) { %>
                         <% inquiries.forEach(item=> { %>
                             <tr style="border-bottom: 1px solid var(--gray);">
@@ -43,7 +43,7 @@
                             </tr>
                             <% }); %>
                                 <% } else { %>
-                                    <tr>
+                                    <tr id="emptyRow">
                                         <td colspan="5" style="padding: 3rem; text-align: center; color: #999;">문의 내역이
                                             없습니다.</td>
                                     </tr>
@@ -53,8 +53,56 @@
         </div>
 
         <div style="margin-top: 2rem; text-align: right;">
-            <a href="/admin/logout" style="color: var(--accent); font-weight: bold;">[로그아웃]</a>
+            <a href="<%= baseUrl %>/admin/logout" id="logoutBtn"
+                style="color: var(--accent); font-weight: bold;">[로그아웃]</a>
         </div>
     </section>
+
+    <script>
+        // GitHub Pages static simulation logic
+        if (location.hostname.includes('github.io')) {
+            // Auth check
+            if (sessionStorage.getItem('sm_admin_log') !== 'true') {
+                alert('로그인이 필요합니다.');
+                location.href = '<%= baseUrl %>/admin/index.html';
+            }
+
+            const tbody = document.getElementById('inquiryTableBody');
+            const emptyRow = document.getElementById('emptyRow');
+
+            // Load from localStorage
+            const localData = JSON.parse(localStorage.getItem('sm_inquiries') || '[]');
+
+            if (localData.length > 0) {
+                if (emptyRow) emptyRow.remove();
+
+                // Sort by newest first
+                localData.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                localData.forEach(item => {
+                    const row = document.createElement('tr');
+                    row.style.borderBottom = '1px solid var(--gray)';
+                    row.innerHTML = `
+                    <td style="padding: 1rem; text-align: center;">${item.id}</td>
+                    <td style="padding: 1rem; text-align: center;">${new Date(item.date).toLocaleString()}</td>
+                    <td style="padding: 1rem; text-align: center;"><strong>${item.name}</strong></td>
+                    <td style="padding: 1rem; text-align: center;">
+                        ${item.product || '일반문의'}<br>
+                        <span style="font-size: 0.85rem; color: #666;">${item.contact}</span>
+                    </td>
+                    <td style="padding: 1rem; max-width: 400px; white-space: pre-wrap;">${item.message}</td>
+                `;
+                    tbody.prepend(row);
+                });
+            }
+
+            // Logout
+            document.getElementById('logoutBtn').addEventListener('click', function (e) {
+                e.preventDefault();
+                sessionStorage.removeItem('sm_admin_log');
+                location.href = '<%= baseUrl %>/admin/index.html';
+            });
+        }
+    </script>
 
     <%- include('../partials/footer') %>
