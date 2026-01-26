@@ -1,9 +1,13 @@
 <%- include('../partials/header') %>
 
     <section>
-        <div class="section-title">
-            <h2>제품문의 내역</h2>
-            <p>고객들로부터 수신된 문의 목록입니다.</p>
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem;">
+            <div class="section-title" style="margin-bottom: 0; text-align: left;">
+                <h2>제품문의 내역</h2>
+                <p>고객들로부터 수신된 문의 목록입니다.</p>
+            </div>
+            <button id="deleteSelectedBtn" class="submit-btn"
+                style="width: auto; padding: 0.6rem 1.5rem; background: #e74c3c;">선택 삭제</button>
         </div>
 
         <div style="overflow-x: auto;">
@@ -11,6 +15,7 @@
                 style="width: 100%; border-collapse: collapse; background: var(--white); box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-radius: 8px;">
                 <thead style="background: var(--primary); color: var(--white);">
                     <tr>
+                        <th style="padding: 1rem;"><input type="checkbox" id="selectAll"></th>
                         <th style="padding: 1rem;">ID</th>
                         <th style="padding: 1rem;">날짜</th>
                         <th style="padding: 1rem;">이름</th>
@@ -21,7 +26,9 @@
                 <tbody id="inquiryTableBody">
                     <% if(locals.inquiries && inquiries.length> 0) { %>
                         <% inquiries.forEach(item=> { %>
-                            <tr style="border-bottom: 1px solid var(--gray);">
+                            <tr style="border-bottom: 1px solid var(--gray);" data-id="<%= item.id %>">
+                                <td style="padding: 1rem; text-align: center;"><input type="checkbox"
+                                        class="inquiry-check" value="<%= item.id %>"></td>
                                 <td style="padding: 1rem; text-align: center;">
                                     <%= item.id %>
                                 </td>
@@ -44,7 +51,7 @@
                             <% }); %>
                                 <% } else { %>
                                     <tr id="emptyRow">
-                                        <td colspan="5" style="padding: 3rem; text-align: center; color: #999;">문의 내역이
+                                        <td colspan="6" style="padding: 3rem; text-align: center; color: #999;">문의 내역이
                                             없습니다.</td>
                                     </tr>
                                     <% } %>
@@ -60,49 +67,79 @@
 
     <script>
         // GitHub Pages static simulation logic
-        if (location.hostname.includes('github.io')) {
-            // Auth check
-            if (sessionStorage.getItem('sm_admin_log') !== 'true') {
-                alert('로그인이 필요합니다.');
-                location.href = '<%= baseUrl %>/admin/index.html';
-            }
+        (function () {
+            if (location.hostname.includes('github.io')) {
+                // Auth check
+                if (sessionStorage.getItem('sm_admin_log') !== 'true') {
+                    alert('로그인이 필요합니다.');
+                    location.href = '<%= baseUrl %>/admin/index.html';
+                    return;
+                }
 
-            const tbody = document.getElementById('inquiryTableBody');
-            const emptyRow = document.getElementById('emptyRow');
+                const tbody = document.getElementById('inquiryTableBody');
 
-            // Load from localStorage
-            const localData = JSON.parse(localStorage.getItem('sm_inquiries') || '[]');
+                function renderTable(data) {
+                    tbody.innerHTML = '';
+                    if (data.length === 0) {
+                        tbody.innerHTML = '<tr id="emptyRow"><td colspan="6" style="padding: 3rem; text-align: center; color: #999;">문의 내역이 없습니다.</td></tr>';
+                        return;
+                    }
 
-            if (localData.length > 0) {
-                if (emptyRow) emptyRow.remove();
+                    // Sort by newest first
+                    data.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-                // Sort by newest first
-                localData.sort((a, b) => new Date(b.date) - new Date(a.date));
+                    data.forEach(item => {
+                        const row = document.createElement('tr');
+                        row.style.borderBottom = '1px solid var(--gray)';
+                        row.setAttribute('data-id', item.id);
+                        row.innerHTML = `
+                        <td style="padding: 1rem; text-align: center;"><input type="checkbox" class="inquiry-check" value="${item.id}"></td>
+                        <td style="padding: 1rem; text-align: center;">${item.id}</td>
+                        <td style="padding: 1rem; text-align: center;">${new Date(item.date).toLocaleString()}</td>
+                        <td style="padding: 1rem; text-align: center;"><strong>${item.name}</strong></td>
+                        <td style="padding: 1rem; text-align: center;">
+                            ${item.product || '일반문의'}<br>
+                            <span style="font-size: 0.85rem; color: #666;">${item.contact}</span>
+                        </td>
+                        <td style="padding: 1rem; max-width: 400px; white-space: pre-wrap;">${item.message}</td>
+                    `;
+                        tbody.appendChild(row);
+                    });
+                }
 
-                localData.forEach(item => {
-                    const row = document.createElement('tr');
-                    row.style.borderBottom = '1px solid var(--gray)';
-                    row.innerHTML = `
-                    <td style="padding: 1rem; text-align: center;">${item.id}</td>
-                    <td style="padding: 1rem; text-align: center;">${new Date(item.date).toLocaleString()}</td>
-                    <td style="padding: 1rem; text-align: center;"><strong>${item.name}</strong></td>
-                    <td style="padding: 1rem; text-align: center;">
-                        ${item.product || '일반문의'}<br>
-                        <span style="font-size: 0.85rem; color: #666;">${item.contact}</span>
-                    </td>
-                    <td style="padding: 1rem; max-width: 400px; white-space: pre-wrap;">${item.message}</td>
-                `;
-                    tbody.prepend(row);
+                // Load from localStorage
+                const localData = JSON.parse(localStorage.getItem('sm_inquiries') || '[]');
+                renderTable(localData);
+
+                // Deletion Logic
+                document.getElementById('deleteSelectedBtn').addEventListener('click', function () {
+                    const checked = document.querySelectorAll('.inquiry-check:checked');
+                    if (checked.length === 0) return alert('삭제할 항목을 선택해주세요.');
+
+                    if (confirm('선택한 ' + checked.length + '개의 문의 내역을 삭제하시겠습니까?')) {
+                        const idsToDelete = Array.from(checked).map(cb => parseInt(cb.value));
+                        let currentData = JSON.parse(localStorage.getItem('sm_inquiries') || '[]');
+                        currentData = currentData.filter(item => !idsToDelete.includes(item.id));
+                        localStorage.setItem('sm_inquiries', JSON.stringify(currentData));
+                        renderTable(currentData);
+                        document.getElementById('selectAll').checked = false;
+                    }
+                });
+
+                // Select All Logic
+                document.getElementById('selectAll').addEventListener('change', function () {
+                    const checkboxes = document.querySelectorAll('.inquiry-check');
+                    checkboxes.forEach(cb => cb.checked = this.checked);
+                });
+
+                // Logout
+                document.getElementById('logoutBtn').addEventListener('click', function (e) {
+                    e.preventDefault();
+                    sessionStorage.removeItem('sm_admin_log');
+                    location.href = '<%= baseUrl %>/admin/index.html';
                 });
             }
-
-            // Logout
-            document.getElementById('logoutBtn').addEventListener('click', function (e) {
-                e.preventDefault();
-                sessionStorage.removeItem('sm_admin_log');
-                location.href = '<%= baseUrl %>/admin/index.html';
-            });
-        }
+        })();
     </script>
 
     <%- include('../partials/footer') %>
