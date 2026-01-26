@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SM Global</title>
+    <link rel="stylesheet" href="/sm/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <header>
+        <div class="nav-container">
+            <a href="/sm/en" class="logo">SM Global</a>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="/sm/en">
+                            About Us
+                        </a></li>
+                    <li><a href="/sm/en#products">
+                            Products &amp; Services
+                        </a></li>
+                    <li><a href="/sm/en/inquiry">
+                            Inquiry
+                        </a></li>
+                </ul>
+            </nav>
+            <div class="lang-switch">
+                <a href="/sm/" class="">KO</a>
+                <a href="/sm/en" class="active">EN</a>
+                <a href="/sm/jp" class="">JP</a>
+                <a href="/sm/cn" class="">CN</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="inquiry-container">
+        <h2 class="section-title">
+            Product &amp; Partner Inquiry
+        </h2>
+        <!-- Note: On static GitHub Pages, POST requests won't work. We'll use a placeholder action or mailto for demo purposes if static. -->
+        <form action="/sm/api/inquiry" method="POST"
+            onsubmit="alert('This feature requires a backend server. On GitHub Pages, data cannot be saved.'); return false;">
+            <div class="form-group">
+                <label for="name">
+                    Name
+                </label>
+                <input type="text" id="name" name="name" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="contact">
+                    Contact (Email or Phone)
+                </label>
+                <input type="text" id="contact" name="contact" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="message">
+                    Message
+                </label>
+                <textarea id="message" name="message" class="form-control" required></textarea>
+            </div>
+            <button type="submit" class="submit-btn">
+                Submit
+            </button>
+        </form>
+    </div>
+
+        <footer>
+        <div class="footer-content">
+            <div class="footer-info">
+                <p><strong>Sang &amp; M Co., Ltd.</strong></p>
+                <p>217 Oedong-gil, Daesowon-myeon, Chungju-si, Chungcheongbuk-do, Korea</p>
+                <p>CEO: Jaesu Jeong | Business License: 357-86-00138</p>
+                <p>&copy; 2026 SM Global. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
