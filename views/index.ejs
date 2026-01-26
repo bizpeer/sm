@@ -18,7 +18,7 @@
                     <div class="product-card">
                         <img src="<%= baseUrl %>/images/<%= image %>" alt="Product" class="product-image">
                         <div class="product-info">
-                            <a href="<%= baseUrl %>/<%= lang === 'ko' ? '' : lang %>/inquiry?product=<%= image %>"
+                            <a href="<%= baseUrl %><%= lang === 'ko' ? '' : '/' + lang %>/inquiry?product=<%= image %>"
                                 class="inquiry-btn">
                                 <%= t.inquiry_button %>
                             </a>
@@ -33,7 +33,7 @@
                                         style="height:250px; background:#eee; display:flex; align-items:center; justify-content:center;">
                                         No Image</div>
                                     <div class="product-info">
-                                        <a href="<%= baseUrl %>/<%= lang === 'ko' ? '' : lang %>/inquiry"
+                                        <a href="<%= baseUrl %><%= lang === 'ko' ? '' : '/' + lang %>/inquiry"
                                             class="inquiry-btn">
                                             <%= t.inquiry_button %>
                                         </a>

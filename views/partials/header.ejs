@@ -12,16 +12,16 @@
 <body>
     <header>
         <div class="nav-container">
-            <a href="<%= baseUrl %>/<%= lang === 'ko' ? '' : lang %>" class="logo">상앤엠</a>
+            <a href="<%= baseUrl %><%= lang === 'ko' ? '' : '/' + lang %>" class="logo">상앤엠</a>
             <nav>
                 <ul class="nav-links">
-                    <li><a href="<%= baseUrl %>/<%= lang === 'ko' ? '' : lang %>">
+                    <li><a href="<%= baseUrl %><%= lang === 'ko' ? '' : '/' + lang %>">
                             <%= t.menu_about %>
                         </a></li>
-                    <li><a href="<%= baseUrl %>/<%= lang === 'ko' ? '' : lang %>#products">
+                    <li><a href="<%= baseUrl %><%= lang === 'ko' ? '' : '/' + lang %>#products">
                             <%= t.menu_products %>
                         </a></li>
-                    <li><a href="<%= baseUrl %>/<%= lang === 'ko' ? '' : lang %>/inquiry">
+                    <li><a href="<%= baseUrl %><%= lang === 'ko' ? '' : '/' + lang %>/inquiry">
                             <%= t.menu_inquiry %>
                         </a></li>
                 </ul>
