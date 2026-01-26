@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - SM Global</title>
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f9f9f9;
+        }
+
+        header {
+            background: #2c3e50;
+            color: white;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        h2 {
+            border-bottom: 2px solid #eee;
+            padding-bottom: 0.5rem;
+            margin-top: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #f8f9fa;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .product-item {
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .product-item img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            margin-bottom: 10px;
+            background: #eee;
+        }
+
+        .btn-upload {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .logout {
+            color: white;
+            text-decoration: none;
+            border: 1px solid white;
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div>SM Global Admin</div>
+        <a href="/admin/logout" class="logout">Logout</a>
+    </header>
+
+    <div class="container">
+        <!-- Inquiry Section -->
+        <div class="card">
+            <h2>Inquiries</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Name</th>
+                        <th>Contact</th>
+                        <th>Message</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (inquiries && inquiries.length> 0) { %>
+                        <% inquiries.forEach(function(item) { %>
+                            <tr>
+                                <td>
+                                    <%= item.date %>
+                                </td>
+                                <td>
+                                    <%= item.name %>
+                                </td>
+                                <td>
+                                    <%= item.contact %>
+                                </td>
+                                <td>
+                                    <%= item.message %>
+                                </td>
+                            </tr>
+                            <% }); %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="4" style="text-align:center;">No inquiries found.</td>
+                                    </tr>
+                                    <% } %>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Product Image Management -->
+        <div class="card">
+            <h2>Product Images (Landing Page)</h2>
+            <div class="product-grid">
+                <% for(let i=1; i<=6; i++) { %>
+                    <div class="product-item">
+                        <p>Product <%= i %>
+                        </p>
+                        <img src="/images/products/product<%= i %>.jpg?v=<%= Date.now() %>"
+                            onerror="this.src='https://via.placeholder.com/300x200?text=No+Image'">
+                        <form action="/admin/upload" method="POST" enctype="multipart/form-data">
+                            <input type="file" name="product<%= i %>" accept="image/*" required
+                                style="max-width: 180px;">
+                            <button type="submit" class="btn-upload">Upload</button>
+                        </form>
+                    </div>
+                    <% } %>
+            </div>
+            <p style="font-size: 0.9rem; color: #666; margin-top: 1rem;">
+                * Uploading will overwrite the existing image for that slot.
+                * Images are saved as product1.jpg, product2.jpg, etc.
+            </p>
+        </div>
+    </div>
+</body>
+
+</html>

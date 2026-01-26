@@ -1,0 +1,14 @@
+<%- include('partials/header') %>
+
+    <div style="text-align: center; padding: 4rem;">
+        <h1>
+            <%= message %>
+        </h1>
+        <h2>
+            <%= error.status %>
+        </h2>
+        <pre><%= error.stack %></pre>
+        <a href="/" class="inquiry-btn">Go Home</a>
+    </div>
+
+    <%- include('partials/footer') %>
