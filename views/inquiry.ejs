@@ -4,9 +4,7 @@
         <h2 class="section-title">
             <%= t.inquiry_title %>
         </h2>
-        <!-- Note: On static GitHub Pages, POST requests won't work. We'll use a placeholder action or mailto for demo purposes if static. -->
-        <form action="<%= baseUrl %>/api/inquiry" method="POST"
-            onsubmit="alert('This feature requires a backend server. On GitHub Pages, data cannot be saved.'); return false;">
+        <form action="/api/inquiry" method="POST">
             <div class="form-group">
                 <label for="name">
                     <%= t.inquiry_name %>

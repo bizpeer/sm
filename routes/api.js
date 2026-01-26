@@ -14,10 +14,12 @@ router.post('/inquiry', (req, res) => {
 
     let inquiries = [];
     try {
-        const data = fs.readFileSync(dataFile, 'utf-8');
-        inquiries = JSON.parse(data);
+        if (fs.existsSync(dataFile)) {
+            const data = fs.readFileSync(dataFile, 'utf-8');
+            inquiries = JSON.parse(data);
+        }
     } catch (err) {
-        // file might not exist or be empty
+        console.error('Error reading data file:', err);
     }
 
     const newInquiry = {
@@ -25,16 +27,17 @@ router.post('/inquiry', (req, res) => {
         name,
         contact,
         message,
-        date: new Date().toLocaleString()
+        date: new Date().toISOString()
     };
 
     inquiries.push(newInquiry);
 
-    fs.writeFileSync(dataFile, JSON.stringify(inquiries, null, 2));
+    try {
+        fs.writeFileSync(dataFile, JSON.stringify(inquiries, null, 2));
+    } catch (err) {
+        console.error('Error writing data file:', err);
+    }
 
-    // Redirect back to home or a thank you page. For now, alert and redirect.
-    // Since it's a form submit, we can render a success page or redirect.
-    // Let's redirect to home with a query param for success message (handled by client js if we had it, or just simple redirect)
     res.redirect('/?msg=success');
 });
 

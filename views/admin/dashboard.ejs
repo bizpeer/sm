@@ -153,7 +153,7 @@
                     <div class="product-item">
                         <p>Product <%= i %>
                         </p>
-                        <img src="/images/products/product<%= i %>.jpg?v=<%= Date.now() %>"
+                        <img src="/images/products/product<%= i %>.jpg"
                             onerror="this.src='https://via.placeholder.com/300x200?text=No+Image'">
                         <form action="/admin/upload" method="POST" enctype="multipart/form-data">
                             <input type="file" name="product<%= i %>" accept="image/*" required
@@ -163,10 +163,6 @@
                     </div>
                     <% } %>
             </div>
-            <p style="font-size: 0.9rem; color: #666; margin-top: 1rem;">
-                * Uploading will overwrite the existing image for that slot.
-                * Images are saved as product1.jpg, product2.jpg, etc.
-            </p>
         </div>
     </div>
 </body>
