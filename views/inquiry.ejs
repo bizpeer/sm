@@ -1,42 +1,43 @@
 <%- include('partials/header') %>
 
-    <div class="inquiry-container">
-        <h2 class="section-title">
-            <%= t.inquiry_title %>
-        </h2>
-        <form id="inquiryForm" action="/api/inquiry" method="POST">
-            <div class="form-group">
-                <label for="name">
-                    <%= t.inquiry_name %>
-                </label>
-                <input type="text" id="name" name="name" class="form-control" required>
-            </div>
-            <div class="form-group">
-                <label for="contact">
-                    <%= t.inquiry_contact %>
-                </label>
-                <input type="text" id="contact" name="contact" class="form-control" required>
-            </div>
-            <div class="form-group">
-                <label for="message">
-                    <%= t.inquiry_message %>
-                </label>
-                <textarea id="message" name="message" class="form-control" required></textarea>
-            </div>
-            <button type="submit" class="submit-btn" id="submitBtn">
-                <%= t.inquiry_submit %>
-            </button>
-        </form>
-    </div>
+    <section>
+        <div class="section-title">
+            <h2>제품문의</h2>
+            <p>원하시는 제품에 대해 상세히 문의해 주세요. 최대한 빠르게 답변드리겠습니다.</p>
+        </div>
+
+        <div class="inquiry-form">
+            <form action="/api/inquiry" method="POST">
+                <div class="form-group">
+                    <label for="name">이름</label>
+                    <input type="text" id="name" name="name" placeholder="성함을 입력해주세요." required>
+                </div>
+                <div class="form-group">
+                    <label for="contact">연락처 (Email 혹은 전화번호)</label>
+                    <input type="text" id="contact" name="contact" placeholder="연락받으실 정보를 입력해주세요." required>
+                </div>
+                <div class="form-group">
+                    <label for="message">문의사항</label>
+                    <textarea id="message" name="message" placeholder="문의하실 내용을 상세히 적어주세요. (최소 5문단 이상 권장)"
+                        required></textarea>
+                </div>
+                <% if(locals.product) { %>
+                    <input type="hidden" name="product" value="<%= product %>">
+                    <p style="margin-bottom: 1rem; color: var(--accent);"><strong>문의 제품: <%= product %></strong></p>
+                    <% } %>
+                        <button type="submit" class="submit-btn" id="submitBtn">문의 제출하기</button>
+            </form>
+        </div>
+    </section>
 
     <script>
-        document.getElementById('inquiryForm').onsubmit = function (e) {
-            // Prevent default POST on static GitHub Pages to avoid 405 error
-            if (location.hostname.includes('github.io')) {
+        // GitHub Pages warning script
+        if (location.hostname.includes('github.io')) {
+            document.getElementById('submitBtn').addEventListener('click', function (e) {
                 e.preventDefault();
-                alert('GitHub Pages는 정적 호스팅이므로 실제 데이터 저장은 지원되지 않습니다.\nNode.js 백엔드 서버가 있는 경우에만 저장이 가능합니다.');
-            }
-        };
+                alert('GitHub Pages는 정적 호스팅이므로 실제 데이터 저장은 지원되지 않습니다.\nNode.js 백엔드 서버가 있는 환경이나 로컬 환경에서 테스트해주시기 바랍니다.');
+            });
+        }
     </script>
 
     <%- include('partials/footer') %>

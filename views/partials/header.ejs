@@ -1,36 +1,24 @@
 <!DOCTYPE html>
-<html lang="<%= lang %>">
+<html lang="ko">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SM Global</title>
-    <link rel="stylesheet" href="<%= baseUrl %>/css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <title>상앤엠 - 자연석 판매 전문</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 
 <body>
     <header>
         <div class="nav-container">
-            <a href="<%= baseUrl %><%= lang === 'ko' ? '' : '/' + lang %>" class="logo">상앤엠</a>
+            <a href="/" class="logo">상앤엠</a>
             <nav>
                 <ul class="nav-links">
-                    <li><a href="<%= baseUrl %><%= lang === 'ko' ? '' : '/' + lang %>">
-                            <%= t.menu_about %>
-                        </a></li>
-                    <li><a href="<%= baseUrl %><%= lang === 'ko' ? '' : '/' + lang %>#products">
-                            <%= t.menu_products %>
-                        </a></li>
-                    <li><a href="<%= baseUrl %><%= lang === 'ko' ? '' : '/' + lang %>/inquiry">
-                            <%= t.menu_inquiry %>
-                        </a></li>
+                    <li><a href="/">회사소개</a></li>
+                    <li><a href="/#products">제품소개</a></li>
+                    <li><a href="/inquiry">제품문의</a></li>
+                    <li><a href="/admin">관리자</a></li>
                 </ul>
             </nav>
-            <div class="lang-switch">
-                <a href="<%= baseUrl %>/" class="<%= lang === 'ko' ? 'active' : '' %>">KO</a>
-                <a href="<%= baseUrl %>/en" class="<%= lang === 'en' ? 'active' : '' %>">EN</a>
-                <a href="<%= baseUrl %>/jp" class="<%= lang === 'jp' ? 'active' : '' %>">JP</a>
-                <a href="<%= baseUrl %>/cn" class="<%= lang === 'cn' ? 'active' : '' %>">CN</a>
-            </div>
         </div>
     </header>

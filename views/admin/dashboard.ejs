@@ -1,170 +1,60 @@
-<!DOCTYPE html>
-<html lang="ko">
+<%- include('../partials/header') %>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - SM Global</title>
-    <style>
-        body {
-            font-family: 'Noto Sans KR', sans-serif;
-            margin: 0;
-            padding: 0;
-            background: #f9f9f9;
-        }
+    <section>
+        <div class="section-title">
+            <h2>제품문의 내역</h2>
+            <p>고객들로부터 수신된 문의 목록입니다.</p>
+        </div>
 
-        header {
-            background: #2c3e50;
-            color: white;
-            padding: 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
-
-        .card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            margin-bottom: 2rem;
-        }
-
-        h2 {
-            border-bottom: 2px solid #eee;
-            padding-bottom: 0.5rem;
-            margin-top: 0;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-        }
-
-        th,
-        td {
-            text-align: left;
-            padding: 12px;
-            border-bottom: 1px solid #ddd;
-        }
-
-        th {
-            background: #f8f9fa;
-        }
-
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-        }
-
-        .product-item {
-            border: 1px solid #ddd;
-            padding: 10px;
-            border-radius: 4px;
-            text-align: center;
-        }
-
-        .product-item img {
-            width: 100%;
-            height: 150px;
-            object-fit: cover;
-            margin-bottom: 10px;
-            background: #eee;
-        }
-
-        .btn-upload {
-            background: #3498db;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .logout {
-            color: white;
-            text-decoration: none;
-            border: 1px solid white;
-            padding: 5px 10px;
-            border-radius: 4px;
-        }
-    </style>
-</head>
-
-<body>
-    <header>
-        <div>SM Global Admin</div>
-        <a href="/admin/logout" class="logout">Logout</a>
-    </header>
-
-    <div class="container">
-        <!-- Inquiry Section -->
-        <div class="card">
-            <h2>Inquiries</h2>
-            <table>
-                <thead>
+        <div style="overflow-x: auto;">
+            <table
+                style="width: 100%; border-collapse: collapse; background: var(--white); box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-radius: 8px;">
+                <thead style="background: var(--primary); color: var(--white);">
                     <tr>
-                        <th>Date</th>
-                        <th>Name</th>
-                        <th>Contact</th>
-                        <th>Message</th>
+                        <th style="padding: 1rem;">ID</th>
+                        <th style="padding: 1rem;">날짜</th>
+                        <th style="padding: 1rem;">이름</th>
+                        <th style="padding: 1rem;">제품/연락처</th>
+                        <th style="padding: 1rem;">문의내용</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <% if (inquiries && inquiries.length> 0) { %>
-                        <% inquiries.forEach(function(item) { %>
-                            <tr>
-                                <td>
-                                    <%= item.date %>
+                    <% if(locals.inquiries && inquiries.length> 0) { %>
+                        <% inquiries.forEach(item=> { %>
+                            <tr style="border-bottom: 1px solid var(--gray);">
+                                <td style="padding: 1rem; text-align: center;">
+                                    <%= item.id %>
                                 </td>
-                                <td>
-                                    <%= item.name %>
+                                <td style="padding: 1rem; text-align: center;">
+                                    <%= new Date(item.date).toLocaleString() %>
                                 </td>
-                                <td>
-                                    <%= item.contact %>
+                                <td style="padding: 1rem; text-align: center;"><strong>
+                                        <%= item.name %>
+                                    </strong></td>
+                                <td style="padding: 1rem; text-align: center;">
+                                    <%= item.product || '일반문의' %><br>
+                                        <span style="font-size: 0.85rem; color: #666;">
+                                            <%= item.contact %>
+                                        </span>
                                 </td>
-                                <td>
+                                <td style="padding: 1rem; max-width: 400px; white-space: pre-wrap;">
                                     <%= item.message %>
                                 </td>
                             </tr>
                             <% }); %>
                                 <% } else { %>
                                     <tr>
-                                        <td colspan="4" style="text-align:center;">No inquiries found.</td>
+                                        <td colspan="5" style="padding: 3rem; text-align: center; color: #999;">문의 내역이
+                                            없습니다.</td>
                                     </tr>
                                     <% } %>
                 </tbody>
             </table>
         </div>
 
-        <!-- Product Image Management -->
-        <div class="card">
-            <h2>Product Images (Landing Page)</h2>
-            <div class="product-grid">
-                <% for(let i=1; i<=6; i++) { %>
-                    <div class="product-item">
-                        <p>Product <%= i %>
-                        </p>
-                        <img src="/images/products/product<%= i %>.jpg"
-                            onerror="this.src='https://via.placeholder.com/300x200?text=No+Image'">
-                        <form action="/admin/upload" method="POST" enctype="multipart/form-data">
-                            <input type="file" name="product<%= i %>" accept="image/*" required
-                                style="max-width: 180px;">
-                            <button type="submit" class="btn-upload">Upload</button>
-                        </form>
-                    </div>
-                    <% } %>
-            </div>
+        <div style="margin-top: 2rem; text-align: right;">
+            <a href="/admin/logout" style="color: var(--accent); font-weight: bold;">[로그아웃]</a>
         </div>
-    </div>
-</body>
+    </section>
 
-</html>
+    <%- include('../partials/footer') %>
