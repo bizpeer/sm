@@ -18,4 +18,14 @@ const html = ejs.render(template, {
 });
 
 fs.writeFileSync(path.join(__dirname, '../index.html'), html);
-console.log('Generated index.html for GitHub Pages preview');
+console.log('Generated index.html');
+
+// Render Inquiry Page
+const inquiryTemplate = fs.readFileSync(path.join(__dirname, '../views/inquiry.ejs'), 'utf-8');
+const inquiryHtml = ejs.render(inquiryTemplate, {
+    ...renderData,
+    filename: path.join(__dirname, '../views/inquiry.ejs')
+});
+
+fs.writeFileSync(path.join(__dirname, '../inquiry.html'), inquiryHtml);
+console.log('Generated inquiry.html');
